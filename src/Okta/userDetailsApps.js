@@ -5,11 +5,6 @@ import { Box, } from '@mui/material';
 
 const UserDetailsApps = ({ data }) => {
 
-    if(data) {
-        console.info('User\'s assigned Apps')
-        console.info(data)    
-    }
-
     //Column definitions pointing to data
     const columns = useMemo(() => [
         {id: 'id', header: 'Id', accessorKey: 'id'},

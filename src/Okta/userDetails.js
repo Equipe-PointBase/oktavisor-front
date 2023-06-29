@@ -24,7 +24,7 @@ const UserDetails = ({ userId, handleCloseDetails, currentToken }) => {
                 },
             })
             
-            console.info(result)
+            //console.info(result)
             setDetailData(result.data)
             var myModal = new bootstrap.Modal(document.getElementById('modalDetails'))
             myModal.show()

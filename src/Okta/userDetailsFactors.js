@@ -4,11 +4,6 @@ import MaterialReactTable from 'material-react-table'
 
 const UserDetailsFactors = ({ data }) => {
 
-    if(data) {
-        console.info('Users Factors/Authenticators')
-        console.info(data)
-    }
-
     //Column definitions pointing to data
     const columns = useMemo(() => [
         {id: 'type', header: 'Type', accessorKey: 'factorType'},
