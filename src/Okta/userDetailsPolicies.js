@@ -1,16 +1,14 @@
 import React, {useEffect} from 'react'
 import Accordion from 'react-bootstrap/Accordion'
 
-import _ from 'lodash';
-
 const UserDetailsPolicies = ({ data, title }) => {
 
-    useEffect(() => {
+/*     useEffect(() => {
 
         if(!data) return
 
     }, [data])
-
+ */
     return (
         <Accordion defaultActiveKey="0" alwaysOpen>
             <Accordion.Item eventKey="0">
@@ -21,7 +19,7 @@ const UserDetailsPolicies = ({ data, title }) => {
                     {data && data.map(item => (
                         <li className={item.isApplicable ? `text-${item.hit}`: ''}>
                             <span className={item.isApplicable ? `text-${item.hit}`: ''}>{item.name}</span>
-                            <span className={`item.isApplicable ? text-${item.hit} : ''}` + ' float-right'}>{item.status}</span>
+                            <span className={`${item.isApplicable ? `text-${item.hit}` : ''} float-right`}>{item.status}</span>
                             <p className="text-secondary">{item.description}</p>
                         </li>))
                     }

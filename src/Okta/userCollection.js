@@ -96,12 +96,13 @@ function UserCollection (data) {
         setShowDelete(false) 
     }
 
-    function handleMassDelete() {
+    async function handleMassDelete() {
         //Get ids of items to delete to send them over to backend
         var itemsToDelete = selectedItems.map((row) => row.getValue('id'))
 
-        
 
+
+        
         //Reflect on the client 
         var res = myData.filter(obj => !itemsToDelete.includes(obj.id))
         setMyData(res)
@@ -122,6 +123,12 @@ function UserCollection (data) {
             {id: 'email', header: 'Email', accessorKey: 'profile.email'},
             {id: 'status', header: 'Status', accessorKey: 'status'},
             {id: 'provider', header: 'Provider', accessorKey: 'credentials.provider.name'},
+            {id: 'created', header: 'Created', accessorKey: 'created'},
+            {id: 'activated', header: 'Activated', accessorKey: 'activated'},
+            {id: 'statusChanged', header: 'Status changed', accessorKey: 'statusChanged'},
+            {id: 'lastLogin', header: 'Last login', accessorKey: 'lastLogin'},
+            {id: 'lastUpdated', header: 'Last update', accessorKey: 'lastUpdated'},
+            {id: 'passwordChanged', header: 'Pwd changed', accessorKey: 'passwordChanged'},
         ],
         [],
     )
@@ -140,7 +147,7 @@ function UserCollection (data) {
                 enableFullScreenToggle={false}
 
                 initialState={{
-                    columnVisibility: { id: false },
+                    columnVisibility: { id: false, created: false, activated: false, statusChanged: false, lastLogin: false, lastUpdated: false, passwordChanged: false },
                     density: 'compact',
                     showGlobalFilter: true,
                 }}
