@@ -15,9 +15,9 @@ const UserDetailsPolicies = ({ data, title }) => {
                 <Accordion.Header>{title}</Accordion.Header>
                 <Accordion.Body style={{padding: 0.5 + 'rem', paddingRight: 1 + 'rem'}}>
 
-                <ul class="timeline">
+                <ul className="timeline">
                     {data && data.map(item => (
-                        <li className={item.isApplicable ? `text-${item.hit}`: ''}>
+                        <li key={item.id} className={item.isApplicable ? `text-${item.hit}`: ''}>
                             <span className={item.isApplicable ? `text-${item.hit}`: ''}>{item.name}</span>
                             <span className={`${item.isApplicable ? `text-${item.hit}` : ''} float-right`}>{item.status}</span>
                             <p className="text-secondary">{item.description}</p>

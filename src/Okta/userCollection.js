@@ -12,25 +12,29 @@ import UserDetails from './userDetails'
 import UserMassDelete from './userMassDelete'
 
 
-function UserCollection (data) {
+function UserCollection ({data, serverFilter}) {
 
-    //console.info(data.data)
-    const [currentToken, setCurrentToken] = useState(data.data)
+    //console.info(data)
+    //console.info(serverFilter)
+    const [currentToken, setCurrentToken] = useState(data)
     const [moreUrl, setMoreUrl] = useState('')
     const [myData, setMyData] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
-    const [selectedId, setSelectedId] = useState(null)
+    const [selectedId, setSelectedId] = useState('')
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const myUrl = visorConfig.backEnd.baseUrl + '/users'
+                var myUrl = visorConfig.backEnd.baseUrl + '/users'
+                if(serverFilter) myUrl += '?search=' + serverFilter
+
                 let result = await axios(myUrl, { 
                     method: 'GET',
                     headers: { 
-                        Authorization: `Bearer ${currentToken.accessToken}`,
-                        Domain: currentToken.claims.iss
+                        'Authorization': `Bearer ${currentToken.accessToken}`,
+                        'okta-response' : 'omitCredentialsLinks',
+                        'Domain': currentToken.claims.iss
                     },
                 })
     
@@ -112,6 +116,10 @@ function UserCollection (data) {
     
 
   
+    function formatDate(dateString) {
+        return dateString ? dateString.replace('T', ' ').substring(0, 19) : ''
+    }
+
     //Column definitions pointing to data
     const columns = useMemo(() => [
             {id: 'id', header: 'Id', accessorKey: 'id'},
@@ -123,12 +131,12 @@ function UserCollection (data) {
             {id: 'email', header: 'Email', accessorKey: 'profile.email'},
             {id: 'status', header: 'Status', accessorKey: 'status'},
             {id: 'provider', header: 'Provider', accessorKey: 'credentials.provider.name'},
-            {id: 'created', header: 'Created', accessorKey: 'created'},
-            {id: 'activated', header: 'Activated', accessorKey: 'activated'},
-            {id: 'statusChanged', header: 'Status changed', accessorKey: 'statusChanged'},
-            {id: 'lastLogin', header: 'Last login', accessorKey: 'lastLogin'},
-            {id: 'lastUpdated', header: 'Last update', accessorKey: 'lastUpdated'},
-            {id: 'passwordChanged', header: 'Pwd changed', accessorKey: 'passwordChanged'},
+            {id: 'created', header: 'Created', accessorFn: (row) => formatDate(row.created)},
+            {id: 'activated', header: 'Activated', accessorFn: (row) => formatDate(row.activated)},
+            {id: 'statusChanged', header: 'Status changed', accessorFn: (row) => formatDate(row.statusChanged)},
+            {id: 'lastLogin', header: 'Last login', accessorFn: (row) => formatDate(row.lastLogin)},
+            {id: 'lastUpdated', header: 'Last update', accessorFn: (row) => formatDate(row.lastUpdated)},
+            {id: 'passwordChanged', header: 'Pwd changed', accessorFn: (row) => formatDate(row.passwordChanged)},
         ],
         [],
     )

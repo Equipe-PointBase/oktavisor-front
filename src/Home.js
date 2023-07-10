@@ -12,8 +12,6 @@ import LoginButton from './login-button'
 import MaterialReactTable from 'material-react-table'
 import { Box, IconButton } from '@mui/material'
 import { Edit as EditIcon, Delete as DeleteIcon, Share as ShareIcon } from '@mui/icons-material'
-import Fab from '@mui/material/Fab'
-import AddIcon from '@mui/icons-material/Add'
 
 
 function Home () {
@@ -178,8 +176,8 @@ function Home () {
                     renderTopToolbarCustomActions={({ table }) => {
                         return (
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                <h5 className='mt-2' style={{marginLeft: '.5rem', marginRight: '1rem'}}>Environments</h5>
-                                <Fab data-bs-toggle="modal" data-bs-target="#modalEnvironment" color="primary" size="small" aria-label="add" onClick={() => editEnvironment()} > <AddIcon /> </Fab>
+                                <h5 className='mt-1' style={{marginLeft: '.5rem', marginRight: '1rem'}}>Environments</h5>
+                                <button className='btn btn-sm btn-outline-primary' data-bs-toggle="modal" data-bs-target="#modalEnvironment" aria-label="add" onClick={() => editEnvironment()} > + Add </button>
                             </div>
                         );
                       }}

@@ -33,8 +33,7 @@ const EnvironmentPage = () => {
   const {id} = useParams()
   const currentEnvironment = environments.find(item => item.name === id)
 
-  const [isWidgetLoaded, setIsWidgetLoaded] = useState(false)
-  const [currentChild, setCurrentChild] = useState('users')
+
   const [orgAdminUI, setOrgAdminUI] = useState(currentEnvironment.issuer)
 
   useEffect(() => {
@@ -62,6 +61,8 @@ const EnvironmentPage = () => {
     fetchData()
   }, [currentEnvironment])
 
+
+  const [isWidgetLoaded, setIsWidgetLoaded] = useState(false)
 
   const fetchAccessToken = async () => {
 
@@ -152,6 +153,27 @@ const EnvironmentPage = () => {
   })
 
 
+  const [currentChild, setCurrentChild] = useState('users')
+  const [serverFilter, setServerFilter] = useState('')
+  const [submitFilter, setSubmitFilter] = useState(false)
+
+  useEffect(() => {
+    if (submitFilter) {
+      setSubmitFilter(false)
+    }
+  }, [submitFilter])
+
+  useEffect(() => {
+    setServerFilter('')
+  }, [currentChild])
+
+  const handleServerFilter = (e) => {
+    e.preventDefault()
+
+    // Now searchTerm can be used to search or can be passed to child
+    setSubmitFilter(true)
+  }
+
   return (
     <div className='container'>
 
@@ -171,8 +193,10 @@ const EnvironmentPage = () => {
                   <Navbar.Brand>Environment {id}</Navbar.Brand>
                   <Navbar.Toggle aria-controls="navbar-dark-example" />
                   <Navbar.Collapse id="navbar-dark-example">
-                    <Nav className='me-auto'>
+                    <Nav className='me-auto' variant="underline">
 
+                      <Nav.Link onClick={handleBackToEnvironments}><RiArrowGoBackFill/> Environments</Nav.Link>
+                      <Nav.Link href ={`https://${orgAdminUI}`} target="_blank" rel="noopener noreferrer">Admin UI</Nav.Link>
                       <NavDropdown title="Areas ..." menuVariant="light">
                         <Dropdown.Header>Directory</Dropdown.Header>
                         <Dropdown.Item onClick={() => setCurrentChild('users')}>Users</Dropdown.Item>
@@ -184,16 +208,15 @@ const EnvironmentPage = () => {
                         <NavDropdown.Item onClick={() => setCurrentChild('mfa')}>MFA</NavDropdown.Item>
                         <NavDropdown.Item onClick={() => setCurrentChild('authz')}>Authorization servers</NavDropdown.Item>
                       </NavDropdown>
-
-                      <Nav.Link className='btn btn-sm btn-outline-primary' onClick={handleBackToEnvironments}><RiArrowGoBackFill/> Environments</Nav.Link>
-                      <Nav.Link className='btn btn-sm btn-outline-primary' href ={`https://${orgAdminUI}`} target="_blank" rel="noopener noreferrer">Admin UI</Nav.Link>
                     </Nav>
 
-
-                    <Form className="d-flex">
-                      <Form.Control size="sm" type="search" placeholder="Server-side search" />
-                      <Button variant="outline-primary" size='sm'>Search</Button>
-                    </Form>
+                    {['users', 'groups'].includes(currentChild) &&
+                      <Form className="d-flex" onSubmit={handleServerFilter}>
+                        <Form.Control size="sm" type="search" placeholder="Server-side search" 
+                          value={serverFilter} onChange={e => setServerFilter(e.target.value)} />
+                        <Button variant="outline-primary" size='sm' type='submit'>Search</Button>
+                      </Form>
+                    }
                   </Navbar.Collapse>
                 </Container>
               </Navbar>
@@ -206,7 +229,7 @@ const EnvironmentPage = () => {
 
       {!isWidgetLoaded && token && token.accessToken &&
         <div style={{marginTop: '.15rem'}}>
-          {currentChild === 'users' && <UserCollection data={ token }/>}
+          {currentChild === 'users' && !submitFilter && <UserCollection data={ token } serverFilter={serverFilter}/>}
           {currentChild === 'groups' && <GroupsCollection data={ token } />}
         </div>
       }
