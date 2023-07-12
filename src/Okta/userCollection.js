@@ -160,10 +160,6 @@ function UserCollection ({data, serverFilter}) {
                     showGlobalFilter: true,
                 }}
 
-                muiTableBodyRowProps={({ row }) => ({
-                    backgroundcolor: row.status === 'PROVISIONED' ? 'orange' : 'white'
-                })}
-
                 enableRowActions
                 renderRowActions={({ row }) => (
                   <Box>
