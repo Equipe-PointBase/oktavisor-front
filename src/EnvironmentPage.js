@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { withAuthenticationRequired } from "@auth0/auth0-react"
 import { useQuery } from 'react-query'
@@ -8,8 +8,20 @@ import useStore from './Store'
 import OktaSignIn from '@okta/okta-signin-widget'
 import '@okta/okta-signin-widget/dist/css/okta-sign-in.min.css'
 
+
+import { RiArrowGoBackFill } from "react-icons/ri"
+import Button from 'react-bootstrap/Button'
+import Dropdown from 'react-bootstrap/Dropdown'
+import Form from 'react-bootstrap/Form';
+
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+
 import UserCollection from './Okta/userCollection'
 import GroupsCollection from './Okta/groupsCollection'
+
 
 const EnvironmentPage = () => {
   const environments = useStore(state => state.environments)
@@ -20,6 +32,35 @@ const EnvironmentPage = () => {
   //Get pointer to current environment
   const {id} = useParams()
   const currentEnvironment = environments.find(item => item.name === id)
+
+
+  const [orgAdminUI, setOrgAdminUI] = useState(currentEnvironment.issuer)
+
+  useEffect(() => {
+    async function fetchData() {
+  
+        let parts = []
+        try {
+          const response = await axios.get(`https://${currentEnvironment.issuer}/.well-known/okta-organization`)
+      
+          if (response.status === 200) {
+            const config = response.data
+            //console.info(config)
+            let orgUrl = new URL(config._links.organization.href)
+            parts = orgUrl.hostname.split('.')
+            parts[0] += "-admin"
+            setOrgAdminUI(parts.join('.'))
+          }
+          else 
+            throw new Error(`Failed to retrieve {id} configuration. Status: ${response.status}`)      
+        } 
+        catch (error) {
+            console.error('There has been a problem getting organization configuration:', error);
+        }
+    }
+    fetchData()
+  }, [currentEnvironment])
+
 
   const [isWidgetLoaded, setIsWidgetLoaded] = useState(false)
 
@@ -113,55 +154,82 @@ const EnvironmentPage = () => {
 
 
   const [currentChild, setCurrentChild] = useState('users')
+  const [serverFilter, setServerFilter] = useState('')
+  const [submitFilter, setSubmitFilter] = useState(false)
 
-  //build link to current environment's admin UI
-  async function buildAdminUiUrl(issuer) {
-    let parts = issuer.split(".")
-
-    const response = await axios.get(`https://${issuer}/oauth2/.well-known/oauth-authorization-server`)
-      
-    if (response.status === 200) {
-      const config = response.data
-      console.info(config)
-      //return config
+  useEffect(() => {
+    if (submitFilter) {
+      setSubmitFilter(false)
     }
-    else 
-      throw new Error(`Failed to retrieve authorization server configuration. Status: ${response.status}`)
+  }, [submitFilter])
 
-    parts[0] += "-admin"
-    return parts.join(".")
+  useEffect(() => {
+    setServerFilter('')
+  }, [currentChild])
+
+  const handleServerFilter = (e) => {
+    e.preventDefault()
+
+    // Now searchTerm can be used to search or can be passed to child
+    setSubmitFilter(true)
   }
-
 
   return (
     <div className='container'>
 
       {!isWidgetLoaded &&
-        <h4>
-          Environment {id} 
-          <button type="button" className="btn btn-primary btn-sm" style={{marginRight: 1 + 'em', marginLeft: 1 + 'em'}} onClick={handleBackToEnvironments} >Back to environments</button>
-
-          {token && 
-
+        <>
+          {!token &&
             <>
-              <a className="btn btn-outline-primary btn-sm" style={{marginRight: 1 + 'em'}} 
-                  href={'https://' + buildAdminUiUrl(currentEnvironment.issuer)} target="_blank" rel="noopener noreferrer">Okta Admin UI</a>
-
-              <div className="btn-group btn-group-sm">
-                <button className={currentChild === 'users' ? 'btn btn-outline-primary active' : 'btn btn-outline-primary'} onClick={() => setCurrentChild('users')} aria-current="page">Users</button>
-                <button className={currentChild === 'groups' ? 'btn btn-outline-primary active' : 'btn btn-outline-primary'} onClick={() => setCurrentChild('groups')} aria-current="page">Groups</button>
-                <button className="btn btn-outline-primary">Others</button>
-              </div>
+              Environment {id}           
+              <button type="button" className="btn btn-primary btn-sm" style={{marginRight: 1 + 'em', marginLeft: 1 + 'em'}} onClick={handleBackToEnvironments} >Back to environments</button>
             </>
           }
-        </h4>
+
+          {token &&
+            <>
+              <Navbar id='envBar'>
+                <Container fluid>
+                  <Navbar.Brand>Environment {id}</Navbar.Brand>
+                  <Navbar.Toggle aria-controls="navbar-dark-example" />
+                  <Navbar.Collapse id="navbar-dark-example">
+                    <Nav className='me-auto' variant="underline">
+
+                      <Nav.Link onClick={handleBackToEnvironments}><RiArrowGoBackFill/> Environments</Nav.Link>
+                      <Nav.Link href ={`https://${orgAdminUI}`} target="_blank" rel="noopener noreferrer">Admin UI</Nav.Link>
+                      <NavDropdown title="Areas ..." menuVariant="light">
+                        <Dropdown.Header>Directory</Dropdown.Header>
+                        <Dropdown.Item onClick={() => setCurrentChild('users')}>Users</Dropdown.Item>
+                        <Dropdown.Item onClick={() => setCurrentChild('groups')}>Groups</Dropdown.Item>                      
+                        <Dropdown.Item onClick={() => setCurrentChild('schemas')}>Schemas</Dropdown.Item>                      
+                        <NavDropdown.Divider />
+                        <Dropdown.Header>More ...</Dropdown.Header>
+                        <NavDropdown.Item onClick={() => setCurrentChild('apps')}>Apps</NavDropdown.Item>
+                        <NavDropdown.Item onClick={() => setCurrentChild('mfa')}>MFA</NavDropdown.Item>
+                        <NavDropdown.Item onClick={() => setCurrentChild('authz')}>Authorization servers</NavDropdown.Item>
+                      </NavDropdown>
+                    </Nav>
+
+                    {['users', 'groups'].includes(currentChild) &&
+                      <Form className="d-flex" onSubmit={handleServerFilter}>
+                        <Form.Control size="sm" type="search" placeholder="Server-side search" 
+                          value={serverFilter} onChange={e => setServerFilter(e.target.value)} />
+                        <Button variant="outline-primary" size='sm' type='submit'>Search</Button>
+                      </Form>
+                    }
+                  </Navbar.Collapse>
+                </Container>
+              </Navbar>
+            </>
+          }
+        </>
       }
 
       {isError && <div>An error occurred: {error.message}</div>}
 
       {!isWidgetLoaded && token && token.accessToken &&
-        <div style={{marginTop: '1.5rem'}}>
-          {currentChild === 'users' && <UserCollection data={ token }/>}
+        <div style={{marginTop: '.15rem'}}>
+          {currentChild === 'users' && !submitFilter && <UserCollection data={ token } serverFilter={serverFilter}/>}
           {currentChild === 'groups' && <GroupsCollection data={ token } />}
         </div>
       }
@@ -174,7 +242,7 @@ const EnvironmentPage = () => {
       }
       <div id="widget-container"></div>
     </div>    
-  );
+  )
 }
 
 export default withAuthenticationRequired(EnvironmentPage)

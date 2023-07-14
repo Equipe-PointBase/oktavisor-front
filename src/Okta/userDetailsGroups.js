@@ -5,11 +5,6 @@ import { Box, } from '@mui/material';
 
 const UserDetailsGroups = ({ data }) => {
 
-    if(data) {
-        console.info('User groups')
-        console.info(data)
-    }
-
     //Column definitions pointing to data
     const columns = useMemo(() => [
             {id: 'id', header: 'Id', accessorKey: 'id'},

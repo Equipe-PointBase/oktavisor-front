@@ -9,11 +9,6 @@ import _ from 'lodash';
 
 const UserDetailsProfile = ({ data }) => {
 
-    if(data) {
-        console.info('User Profile')
-        console.info(data)
-    }
-
     const [currentOption, setCurrentOption] = useState('basic')
     const [displayData, setDisplayData] = useState(data)
 
