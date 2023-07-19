@@ -153,6 +153,9 @@ function UserCollection ({data, serverFilter}) {
                 enableGlobalFilter={true} 
                 enableDensityToggle={true}
                 enableFullScreenToggle={false}
+                enableStickyHeader={true}
+                enableStickyFooter={true}         
+                muiTableContainerProps={{ sx: { maxHeight: 700 } }}
 
                 initialState={{
                     columnVisibility: { id: false, created: false, activated: false, statusChanged: false, lastLogin: false, lastUpdated: false, passwordChanged: false },
@@ -189,7 +192,7 @@ function UserCollection ({data, serverFilter}) {
                             }
                         </div>
                     );
-                  }}                
+                }}                
             />
 
             {showDetails && <UserDetails userId={selectedId} handleCloseDetails={handleCloseDetails} currentToken={currentToken} />}

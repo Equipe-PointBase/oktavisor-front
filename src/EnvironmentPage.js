@@ -21,6 +21,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 
 import UserCollection from './Okta/userCollection'
 import GroupsCollection from './Okta/groupsCollection'
+import SchemasCollection from './Okta/schemas'
 
 
 const EnvironmentPage = () => {
@@ -106,7 +107,10 @@ const EnvironmentPage = () => {
           'okta.schemas.read',
           'okta.sessions.read',
           //'okta.templates.read', 'okta.threatInsights.read', 'okta.trustedOrigins.read', 
-          //'okta.uischemas.read', 'okta.userTypes.read', 'okta.reports.read', 'okta.logs.read', 
+          //'okta.uischemas.read', 
+          'okta.userTypes.read', 
+          'okta.reports.read', 
+          'okta.logs.read', 
           //'okta.idps.read', 
           //'okta.riskProviders.read', 
           //'okta.oauthIntegrations.read', 
@@ -230,7 +234,8 @@ const EnvironmentPage = () => {
       {!isWidgetLoaded && token && token.accessToken &&
         <div style={{marginTop: '.15rem'}}>
           {currentChild === 'users' && !submitFilter && <UserCollection data={ token } serverFilter={serverFilter}/>}
-          {currentChild === 'groups' && <GroupsCollection data={ token } />}
+          {currentChild === 'groups' && <GroupsCollection data={ token } serverFilter={serverFilter}/>}
+          {currentChild === 'schemas' && <SchemasCollection data={ token } />}
         </div>
       }
 
