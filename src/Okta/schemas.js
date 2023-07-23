@@ -42,7 +42,7 @@ function SchemasCollection ({data}) {
 
     //Column definitions pointing to data
     const columns = useMemo(() => [
-        {id: 'schema', header: 'Schema', accessorKey: 'schema.name', size: 80},
+        {id: 'schema', header: 'Schema', accessorKey: 'schema.name', size: 90},
         {id: 'title', header: 'Title', accessorKey: 'title'},
         {id: 'name', header: 'Name', accessorKey: 'name'},
         {id: 'type', header: 'Type', accessorKey: 'type'},
@@ -65,6 +65,10 @@ function SchemasCollection ({data}) {
               ),
         },
         {id: 'master', header: 'Master', accessorKey: 'master.type'},
+        {
+            id: 'permission', header: 'Permission', 
+            accessorFn: (row) => row.permissions[0].action
+        },
     ],
     [],
     )
@@ -95,7 +99,7 @@ function SchemasCollection ({data}) {
                         density: 'compact',
                         showGlobalFilter: true,
 
-                        expanded: false,         //expand all groups by default
+                        expanded: true,         //expand all groups by default
                         grouping: ['schema'],   //an array of columns to group by by default (can be multiple)
                         sorting: [{ id: 'title', desc: false }], //sort by title by default
                         pagination: { pageIndex: 0, pageSize: 50 },
