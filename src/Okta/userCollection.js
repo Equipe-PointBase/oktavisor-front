@@ -155,7 +155,8 @@ function UserCollection ({data, serverFilter}) {
                 enableFullScreenToggle={false}
                 enableStickyHeader={true}
                 enableStickyFooter={true}         
-                muiTableContainerProps={{ sx: { maxHeight: 700 } }}
+                muiTableContainerProps={{ sx: { maxHeight: 630 } }}
+                enableGrouping
 
                 initialState={{
                     columnVisibility: { id: false, created: false, activated: false, statusChanged: false, lastLogin: false, lastUpdated: false, passwordChanged: false },
