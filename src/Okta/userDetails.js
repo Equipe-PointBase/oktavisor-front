@@ -56,18 +56,18 @@ const UserDetails = ({ userId, handleCloseDetails, currentToken }) => {
                 <div className='col-6'>
                   <UserDetailsProfile data={detailData ? detailData[0] : null} />
                   <br/>
-                  <UserDetailsFactors  data={detailData ? {factors: detailData[3], catalog: detailData[4]} : null} />
-                  <br/>
                   <UserDetailsGroups  data={detailData ? detailData[1] : null} />
+                  <br/>
+                  <UserDetailsApps  data={detailData ? detailData[2] : null} />
                   <br/>
                 </div>
 
                 <div className='col-6'>
-                  <UserDetailsApps  data={detailData ? detailData[2] : null} />
+                  <UserDetailsPolicies  data={detailData ? detailData[6] : null} title="Password policies" openByDefault={false} />
                   <br/>
-                  <UserDetailsPolicies  data={detailData ? detailData[6] : null} title="Password policies" />
+                  <UserDetailsPolicies  data={detailData ? detailData[7] : null} title="Enrollment policies" openByDefault={true}/>
                   <br/>
-                  <UserDetailsPolicies  data={detailData ? detailData[7] : null} title="Enrollment policies" />
+                  <UserDetailsFactors  data={detailData ? {factors: detailData[3], catalog: detailData[4]} : null} />
                   <br/>
                 </div>
 

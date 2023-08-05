@@ -162,6 +162,7 @@ function UserCollection ({data, serverFilter}) {
                     columnVisibility: { id: false, created: false, activated: false, statusChanged: false, lastLogin: false, lastUpdated: false, passwordChanged: false },
                     density: 'compact',
                     showGlobalFilter: true,
+                    pagination: { pageIndex: 0, pageSize: 50 },
                 }}
 
                 enableRowActions

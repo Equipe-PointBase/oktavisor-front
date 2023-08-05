@@ -1,16 +1,12 @@
 import React, {useEffect} from 'react'
 import Accordion from 'react-bootstrap/Accordion'
 
-const UserDetailsPolicies = ({ data, title }) => {
+const UserDetailsPolicies = ({ data, title, openByDefault }) => {
 
-/*     useEffect(() => {
+    const defaultActiveKey = openByDefault ? "0" : null
 
-        if(!data) return
-
-    }, [data])
- */
     return (
-        <Accordion defaultActiveKey="0" alwaysOpen>
+        <Accordion defaultActiveKey={defaultActiveKey} alwaysOpen>
             <Accordion.Item eventKey="0">
                 <Accordion.Header>{title}</Accordion.Header>
                 <Accordion.Body style={{padding: 0.5 + 'rem', paddingRight: 1 + 'rem'}}>

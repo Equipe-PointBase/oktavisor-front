@@ -104,3 +104,19 @@ ul.timeline {
       ul.timeline > li.text-info:before {
           border: 8px solid;
       }
+
+.form-check-input[type=checkbox] {
+  border-radius: .25em;
+  margin-top: 0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+#okta-sign-in.auth-container .okta-sign-in-header {
+  display: none;
+}
+
+.beacon-container {
+  display: none !important;
+}

@@ -37,12 +37,15 @@ function Home () {
     }
     else {
         //Define states for environment form
-        const newEnvironment = { clientid: '', issuer: '', name: '' }
+        const newEnvironment = { clientid: '', issuer: '', name: '', useClassicEngine: false }
         const [formData, setFormData] = useState(newEnvironment)
         const [formTitle, setFormTitle] = useState('Add Environment')
         const [originalData, setOriginalData] = useState(newEnvironment)
 
-        const handleChange = (event) => { setFormData({ ...formData, [event.target.name]: event.target.value, }) }
+        const handleChange = (event) => { 
+            let myValue = (event.target.type === 'checkbox' ? event.target.checked : event.target.value)
+            setFormData({ ...formData, [event.target.name]: myValue, })
+        }
 
         const editEnvironment = (rowData) => { 
             //console.info(rowData)
@@ -55,6 +58,8 @@ function Home () {
         }
 
         const confirmEditEnvironment = async () => {
+            console.info(formData)
+
             let newItems = originalData.name ? environments.map(item => item.name === originalData.name ? formData : item) : [...environments, formData]
             setEnvironments(newItems)
             await saveEnvironments(newItems)
@@ -118,12 +123,16 @@ function Home () {
                                         <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} />
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="issuer" className="col-form-label">Issuer:</label>
+                                        <label htmlFor="issuer" className="col-form-label">Domain:</label>
                                         <input type="text" className="form-control" name="issuer" value={formData.issuer} onChange={handleChange} />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="clientid" className="col-form-label">ClientId:</label>
                                         <input type="text" className="form-control" name="clientid" value={formData.clientid} onChange={handleChange} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <input type="checkbox" className="form-check-input" name="useClassicEngine" checked={formData.useClassicEngine} onChange={handleChange} />
+                                        <label htmlFor="useClassicEngine" className="col-form-label">Use classic engine</label>
                                     </div>
                                 </form>
 
