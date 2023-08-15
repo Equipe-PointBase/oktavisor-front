@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import Accordion from 'react-bootstrap/Accordion'
 
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+//import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 import _ from 'lodash';
 

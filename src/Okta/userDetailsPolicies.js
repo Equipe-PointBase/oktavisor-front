@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import Accordion from 'react-bootstrap/Accordion'
 
 const UserDetailsPolicies = ({ data, title, openByDefault }) => {

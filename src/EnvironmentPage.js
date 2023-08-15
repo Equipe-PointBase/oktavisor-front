@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { withAuthenticationRequired } from "@auth0/auth0-react"
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react"
+//import { withAuthenticationRequired } from "@auth0/auth0-react"
 import { useQuery } from 'react-query'
 import axios from 'axios'
 import useStore from './Store'
@@ -25,13 +26,18 @@ import SchemasCollection from './Okta/schemas'
 
 
 const EnvironmentPage = () => {
+  
+  //define state/store for environment data
   const environments = useStore(state => state.environments)
+  const setEnvironments = useStore(state => state.setEnvironments)
+
   const history = useHistory()
   //the store cannot be empty and the component must be invoked from the / route
   if(!environments.length) history.push('/')
 
   //Get pointer to current environment
   const {id} = useParams()
+  console.log(id)
   const currentEnvironment = environments.find(item => item.name === id)
 
 
@@ -67,6 +73,43 @@ const EnvironmentPage = () => {
 
   const fetchAccessToken = async () => {
 
+    const scopes = [
+      'okta.users.read', 'okta.users.read.self', 'okta.groups.read',
+      'okta.appGrants.read', 'okta.apps.read', 
+      'okta.authenticators.read', 
+      'okta.authorizationServers.read',
+      'okta.clients.read', 
+      'okta.factors.read', 
+      //'okta.brands.read', 
+      //'okta.captchas.read', 'okta.certificateAuthorities.read', 
+      //'okta.deviceAssurance.read', 'okta.devices.read', 
+      //'okta.domains.read', 'okta.emailDomains.read', 
+      //'okta.inlineHooks.read', 
+      //'okta.eventHooks.read', 
+      //'okta.events.read',
+      //'okta.features.read', 
+      'okta.linkedObjects.read', 
+      'okta.myAccount.email.read', 'okta.myAccount.phone.read', 'okta.myAccount.profile.read', 
+      'okta.networkZones.read',
+      'okta.policies.read', 
+      'okta.profileMappings.read',
+      'okta.roles.read', 
+      'okta.schemas.read',
+      'okta.sessions.read',
+      //'okta.templates.read', 'okta.threatInsights.read', 'okta.trustedOrigins.read', 
+      //'okta.uischemas.read', 
+      'okta.userTypes.read', 
+      'okta.reports.read', 
+      'okta.logs.read', 
+      //'okta.idps.read', 
+      //'okta.riskProviders.read', 
+      //'okta.oauthIntegrations.read', 
+      //'okta.logStreams.read', 
+      //'okta.governance.accessCertifications.read', 
+      //'okta.rateLimits.read', 
+      //'okta.principalRateLimits.read', 
+    ]
+
     const widgetConfig = {
       useClassicEngine: currentEnvironment.useClassicEngine,
       language: 'en',
@@ -80,56 +123,11 @@ const EnvironmentPage = () => {
       baseUrl: 'https://' + currentEnvironment.issuer,
       issuer: 'https://' + currentEnvironment.issuer,
       clientId: currentEnvironment.clientid,
-      redirectUri: window.location.origin + '/environment/callback',
+      redirectUri: window.location.origin + '/environment/' + currentEnvironment.name,
       authParams: {
         pkce: true,
         responseType: ['token'],
-        scopes: [
-          'okta.users.read', 
-          'okta.users.read.self', 
-          'okta.groups.read',
-          'okta.appGrants.read', 
-          'okta.apps.read', 
-          'okta.authenticators.read', 
-          'okta.authorizationServers.read',
-          'okta.clients.read', 
-          'okta.factors.read', 
-          //'okta.brands.read', 
-          //'okta.captchas.read', 
-          //'okta.certificateAuthorities.read', 
-          //'okta.deviceAssurance.read', 
-          //'okta.devices.read', 
-          //'okta.domains.read', 
-          //'okta.emailDomains.read', 
-          'okta.inlineHooks.read', 
-          'okta.eventHooks.read', 
-          //'okta.events.read',
-          //'okta.features.read', 
-          'okta.linkedObjects.read', 
-          'okta.myAccount.email.read', 
-          'okta.myAccount.phone.read', 
-          'okta.myAccount.profile.read', 
-          'okta.networkZones.read',
-          'okta.policies.read', 
-          'okta.profileMappings.read',
-          'okta.roles.read', 
-          'okta.schemas.read',
-          'okta.sessions.read',
-          //'okta.templates.read', 
-          //'okta.threatInsights.read', 
-          'okta.trustedOrigins.read', 
-          //'okta.uischemas.read', 
-          'okta.userTypes.read', 
-          'okta.reports.read', 
-          'okta.logs.read', 
-          'okta.idps.read', 
-          //'okta.riskProviders.read', 
-          //'okta.oauthIntegrations.read', 
-          //'okta.logStreams.read', 
-          //'okta.governance.accessCertifications.read', 
-          //'okta.rateLimits.read', 
-          //'okta.principalRateLimits.read', 
-        ]
+        scopes: scopes
       }
     }
 
