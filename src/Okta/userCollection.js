@@ -8,9 +8,7 @@ import { Box, IconButton } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 
 import UserDetails from './userDetails'
-
 import UserMassDelete from './userMassDelete'
-
 
 function UserCollection ({data, serverFilter}) {
 
@@ -198,7 +196,6 @@ function UserCollection ({data, serverFilter}) {
             />
 
             {showDetails && <UserDetails userId={selectedId} handleCloseDetails={handleCloseDetails} currentToken={currentToken} />}
-
             {showDelete && <UserMassDelete selectedItems={selectedItems} handleClose={handleCloseDelete} handleCallback={handleMassDelete} />}
 
             <div style={{marginTop: '1.5rem'}}></div>
