@@ -211,14 +211,13 @@ const EnvironmentPage = () => {
                       <Nav.Link onClick={handleBackToEnvironments}><RiArrowGoBackFill/> Environments</Nav.Link>
                       <Nav.Link href ={`https://${orgAdminUI}`} target="_blank" rel="noopener noreferrer">Admin UI</Nav.Link>
                       <NavDropdown title="Areas ..." menuVariant="light">
-                        <Dropdown.Header>Core areas ...</Dropdown.Header>
-                          <Dropdown.Header>Directory</Dropdown.Header>
+                        <Dropdown.Header>Directory</Dropdown.Header>
                           <Dropdown.Item onClick={() => setCurrentChild('users')}>Users</Dropdown.Item>
                           <Dropdown.Item onClick={() => setCurrentChild('groups')}>Groups</Dropdown.Item>                      
-                          <NavDropdown.Item onClick={() => setCurrentChild('apps')}>Apps</NavDropdown.Item>
+                          <Dropdown.Item onClick={() => setCurrentChild('schemas')}>Schemas</Dropdown.Item>
                         <NavDropdown.Divider />
                         <Dropdown.Header>More ...</Dropdown.Header>
-                          <Dropdown.Item onClick={() => setCurrentChild('schemas')}>Schemas</Dropdown.Item>
+                          <NavDropdown.Item onClick={() => setCurrentChild('apps')}>Apps</NavDropdown.Item>
                           <NavDropdown.Item onClick={() => setCurrentChild('mfa')}>MFA</NavDropdown.Item>
                           <NavDropdown.Item onClick={() => setCurrentChild('authz')}>Authorization servers</NavDropdown.Item>
                       </NavDropdown>
