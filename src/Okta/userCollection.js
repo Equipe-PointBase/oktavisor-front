@@ -145,6 +145,7 @@ function UserCollection ({data, serverFilter}) {
                 columns={columns}
                 data={myData}
                 state={{ showSkeletons: isLoading }}
+                enableColumnResizing
                 enableRowSelection
                 enableMultiRowSelection={true}
                 enableColumnOrdering
@@ -191,7 +192,7 @@ function UserCollection ({data, serverFilter}) {
                                 </>
                             }
                         </div>
-                    );
+                    )
                 }}                
             />
 
