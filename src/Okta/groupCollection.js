@@ -10,10 +10,8 @@ import SearchIcon from '@mui/icons-material/Search'
 //import GroupDetails from './groupDetails'
 //import GroupMassDelete from './groupMassDelete'
 
-function GroupsCollection ({data, serverFilter}) {
+function GroupCollection ({data, serverFilter}) {
 
-    //console.info(data)
-    //console.info(serverFilter)
     //const [currentToken, setCurrentToken] = useState(data)
     const [currentToken] = useState(data)
     const [moreUrl, setMoreUrl] = useState('')
@@ -135,19 +133,27 @@ function GroupsCollection ({data, serverFilter}) {
 
     //Column definitions pointing to data
     const columns = useMemo(() => [
-        {id: 'id', header: 'Id', accessorKey: 'id'},
-        {id: 'name', header: 'Name', accessorKey: 'profile.name', enableHiding: false,
+        {id: 'source', header: 'Source', enableHiding: false, accessorFn: (row) => row._embedded.app ? row._embedded.app.label : 'Okta',
             Cell: ({ renderedCellValue, row }) => (
-                <Box sx={{display: 'flex', alignItems: 'center', gap: '1rem', }} >
-                    <img alt="avatar" height={25} src={row.original._links.logo[0].href} loading="lazy" style={{ borderRadius: '25%' }} />
+                <Box sx={{display: 'flex', alignItems: 'center', gap: '0.25rem', }} >
+                    <img alt="avatar" height={25} src={row.original._links.logo[0].href} loading="lazy" style={{ borderRadius: '25%', marginRight: '0.75em' }} />
                     <span>{renderedCellValue}</span>
                 </Box>
             )
         },
+
+        {id: 'name', header: 'Name', accessorKey: 'profile.name', enableHiding: false },
+        {id: 'usersCount', header: '#Members', accessorKey: '_embedded.stats.usersCount' },
+        {id: 'appsCount', header: '#Apps', accessorKey: '_embedded.stats.appsCount' },
+        {id: 'groupPushMappingsCount', header: '#PushMappings', accessorKey: '_embedded.stats.groupPushMappingsCount' },
+
+
+        {id: 'id', header: 'Id', accessorKey: 'id'},
+
         {id: 'description', header: 'Description', accessorKey: 'profile.description'},
         {id: 'created', header: 'Created', accessorFn: (row) => formatDate(row.created)},
         {id: 'lastUpdated', header: 'Last modified', accessorFn: (row) => formatDate(row.lastUpdated)},
-        {id: 'type', header: 'Type', accessorKey: 'type'},
+        //{id: 'type', header: 'Type', accessorKey: 'type'},
     ],
     [],
 )
@@ -158,19 +164,20 @@ return(
             columns={columns}
             data={myData}
             state={{ showSkeletons: isLoading }}
+            enableColumnResizing
             enableRowSelection
-            enableMultiRowSelection={true}
+            enableMultiRowSelection
             enableColumnOrdering
-            enableGlobalFilter={true} 
-            enableDensityToggle={true}
+            enableGlobalFilter
+            enableDensityToggle
             enableFullScreenToggle={false}
-            enableStickyHeader={true}
-            enableStickyFooter={true}         
+            enableStickyHeader
+            enableStickyFooter
             muiTableContainerProps={{ sx: { maxHeight: 630 } }}
             enableGrouping
 
             initialState={{
-                columnVisibility: { id: false, description: false, created: false, lastUpdated: false },
+                columnVisibility: { id: false, description: false, created: false, lastUpdated: false, groupPushMappingsCount: false },
                 density: 'compact',
                 showGlobalFilter: true,
                 pagination: { pageIndex: 0, pageSize: 50 },
@@ -206,7 +213,7 @@ return(
                             </>
                         }
                     </div>
-                );
+                )
               }}                
         />
 
@@ -216,4 +223,4 @@ return(
 )
 }
 
-export default withAuthenticationRequired(GroupsCollection)
+export default withAuthenticationRequired(GroupCollection)

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react"
-//import { withAuthenticationRequired } from "@auth0/auth0-react"
+//import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react"
+import { withAuthenticationRequired } from "@auth0/auth0-react"
 import { useQuery } from 'react-query'
 import axios from 'axios'
 import useStore from './Store'
@@ -13,15 +13,15 @@ import '@okta/okta-signin-widget/dist/css/okta-sign-in.min.css'
 import { RiArrowGoBackFill } from "react-icons/ri"
 import Button from 'react-bootstrap/Button'
 import Dropdown from 'react-bootstrap/Dropdown'
-import Form from 'react-bootstrap/Form';
+import Form from 'react-bootstrap/Form'
 
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import Container from 'react-bootstrap/Container'
+import Nav from 'react-bootstrap/Nav'
+import Navbar from 'react-bootstrap/Navbar'
+import NavDropdown from 'react-bootstrap/NavDropdown'
 
 import UserCollection from './Okta/userCollection'
-import GroupsCollection from './Okta/groupsCollection'
+import GroupCollection from './Okta/groupCollection'
 import SchemasCollection from './Okta/schemas'
 
 
@@ -211,15 +211,16 @@ const EnvironmentPage = () => {
                       <Nav.Link onClick={handleBackToEnvironments}><RiArrowGoBackFill/> Environments</Nav.Link>
                       <Nav.Link href ={`https://${orgAdminUI}`} target="_blank" rel="noopener noreferrer">Admin UI</Nav.Link>
                       <NavDropdown title="Areas ..." menuVariant="light">
-                        <Dropdown.Header>Directory</Dropdown.Header>
-                        <Dropdown.Item onClick={() => setCurrentChild('users')}>Users</Dropdown.Item>
-                        <Dropdown.Item onClick={() => setCurrentChild('groups')}>Groups</Dropdown.Item>                      
-                        <Dropdown.Item onClick={() => setCurrentChild('schemas')}>Schemas</Dropdown.Item>                      
+                        <Dropdown.Header>Core areas ...</Dropdown.Header>
+                          <Dropdown.Header>Directory</Dropdown.Header>
+                          <Dropdown.Item onClick={() => setCurrentChild('users')}>Users</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setCurrentChild('groups')}>Groups</Dropdown.Item>                      
+                          <NavDropdown.Item onClick={() => setCurrentChild('apps')}>Apps</NavDropdown.Item>
                         <NavDropdown.Divider />
                         <Dropdown.Header>More ...</Dropdown.Header>
-                        <NavDropdown.Item onClick={() => setCurrentChild('apps')}>Apps</NavDropdown.Item>
-                        <NavDropdown.Item onClick={() => setCurrentChild('mfa')}>MFA</NavDropdown.Item>
-                        <NavDropdown.Item onClick={() => setCurrentChild('authz')}>Authorization servers</NavDropdown.Item>
+                          <Dropdown.Item onClick={() => setCurrentChild('schemas')}>Schemas</Dropdown.Item>
+                          <NavDropdown.Item onClick={() => setCurrentChild('mfa')}>MFA</NavDropdown.Item>
+                          <NavDropdown.Item onClick={() => setCurrentChild('authz')}>Authorization servers</NavDropdown.Item>
                       </NavDropdown>
                     </Nav>
 
@@ -243,7 +244,7 @@ const EnvironmentPage = () => {
       {!isWidgetLoaded && token && token.accessToken &&
         <div style={{marginTop: '.15rem'}}>
           {currentChild === 'users' && !submitFilter && <UserCollection data={ token } serverFilter={serverFilter}/>}
-          {currentChild === 'groups' && <GroupsCollection data={ token } serverFilter={serverFilter}/>}
+          {currentChild === 'groups' && <GroupCollection data={ token } serverFilter={serverFilter}/>}
           {currentChild === 'schemas' && <SchemasCollection data={ token } />}
         </div>
       }
