@@ -127,8 +127,8 @@ function UserCollection ({data, serverFilter}) {
             },
             {id: 'login', header: 'Login', accessorKey: 'profile.login', enableHiding: false},
             {id: 'email', header: 'Email', accessorKey: 'profile.email'},
-            {id: 'status', header: 'Status', accessorKey: 'status'},
-            {id: 'provider', header: 'Provider', accessorKey: 'credentials.provider.name'},
+            {id: 'status', header: 'Status', accessorKey: 'status', filterVariant: 'multi-select'},
+            {id: 'provider', header: 'Provider', accessorKey: 'credentials.provider.name', filterVariant: 'multi-select'},
             {id: 'created', header: 'Created', accessorFn: (row) => formatDate(row.created)},
             {id: 'activated', header: 'Activated', accessorFn: (row) => formatDate(row.activated)},
             {id: 'statusChanged', header: 'Status changed', accessorFn: (row) => formatDate(row.statusChanged)},
@@ -144,6 +144,7 @@ function UserCollection ({data, serverFilter}) {
             <MaterialReactTable
                 columns={columns}
                 data={myData}
+                enableFacetedValues
                 state={{ showSkeletons: isLoading }}
                 enableColumnResizing
                 enableRowSelection

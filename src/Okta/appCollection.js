@@ -7,10 +7,8 @@ import MaterialReactTable from 'material-react-table'
 import { Box, IconButton } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 
-//import GroupDetails from './groupDetails'
-//import GroupMassDelete from './groupMassDelete'
 
-function GroupCollection ({data, serverFilter}) {
+function AppCollection ({data, serverFilter}) {
 
     //const [currentToken, setCurrentToken] = useState(data)
     const [currentToken] = useState(data)
@@ -23,7 +21,7 @@ function GroupCollection ({data, serverFilter}) {
     useEffect(() => {
         async function fetchData() {
             try {
-                var myUrl = visorConfig.backEnd.baseUrl + '/groups'
+                var myUrl = visorConfig.backEnd.baseUrl + '/apps'
                 if(serverFilter) myUrl += '?search=' + serverFilter
 
                 let result = await axios(myUrl, { 
@@ -72,7 +70,7 @@ function GroupCollection ({data, serverFilter}) {
             }
         } 
         catch (error) {
-            console.error('There has been a problem getting groups data:', error)
+            console.error('There has been a problem getting more apps data:', error)
         }
 
         setIsLoading(false)
@@ -91,42 +89,6 @@ function GroupCollection ({data, serverFilter}) {
     //State for checked/selected objects
     const [selectedItems, setSelectedItems] = useState([])
     
-    //State for mass-delete
-    const [showDelete, setShowDelete] = useState(false)
-    function handleCloseDelete() { 
-        setShowDelete(false) 
-    }
-    
-    async function handleMassDelete() {
-        //Get ids of items to delete to send them over to backend
-        var itemsToDelete = selectedItems.map((row) => row.getValue('id'))
-
-        try {
-            const myUrl = visorConfig.backEnd.baseUrl + '/groups'
-                await axios(myUrl, { 
-                    method: 'POST',
-                    headers: { 
-                        Authorization: `Bearer ${currentToken.accessToken}`,
-                        Domain: currentToken.claims.iss
-                    },
-                    data: {
-                        itemsToDelete
-                    } 
-                        
-                })
-        }catch(err) {
-            console.log(err)
-        }
-    
-            
-    
-        //Reflect on the client 
-        var res = myData.filter(obj => !itemsToDelete.includes(obj.id))
-        setMyData(res)
-    
-        setShowDelete(false)
-    }
-
     function formatDate(dateString) {
         return dateString ? dateString.replace('T', ' ').substring(0, 19) : ''
     }
@@ -135,7 +97,7 @@ function GroupCollection ({data, serverFilter}) {
     const columns = useMemo(() => [
         {id: 'id', header: 'Id', accessorKey: 'id'},
 
-        {id: 'source', header: 'Source', enableHiding: false, accessorFn: (row) => row._embedded.app ? row._embedded.app.label : 'Okta',
+        {id: 'label', header: 'Label', enableHiding: false, accessorKey: 'label',
             filterVariant: 'select',
             Cell: ({ renderedCellValue, row }) => (
                 <Box sx={{display: 'flex', alignItems: 'center', gap: '0.25rem', }} >
@@ -145,15 +107,10 @@ function GroupCollection ({data, serverFilter}) {
             )
         },
 
-        {id: 'name', header: 'Name', accessorKey: 'profile.name', enableHiding: false },
-        {id: 'usersCount', header: '#Members', accessorKey: '_embedded.stats.usersCount', filterVariant: 'range', filterFn: 'betweenInclusive', maxSize: 60 },
-        {id: 'appsCount', header: '#Apps', accessorKey: '_embedded.stats.appsCount', filterVariant: 'range', filterFn: 'betweenInclusive', maxSize: 50 },
-        {id: 'groupPushMappingsCount', header: '#PushMappings', accessorKey: '_embedded.stats.groupPushMappingsCount', filterVariant: 'range', filterFn: 'betweenInclusive', },
+        {id: 'signOnMode', header: 'Signon Mode', accessorKey: 'signOnMode', enableHiding: false },
 
-        {id: 'description', header: 'Description', accessorKey: 'profile.description'},
         {id: 'created', header: 'Created', accessorFn: (row) => formatDate(row.created)},
         {id: 'lastUpdated', header: 'Last modified', accessorFn: (row) => formatDate(row.lastUpdated)},
-        //{id: 'type', header: 'Type', accessorKey: 'type'},
     ],
     [],
 )
@@ -178,7 +135,7 @@ return(
             enableGrouping
 
             initialState={{
-                columnVisibility: { id: false, description: false, created: false, lastUpdated: false, groupPushMappingsCount: false },
+                columnVisibility: { id: false, created: false, lastUpdated: false },
                 density: 'compact',
                 showGlobalFilter: true,
                 pagination: { pageIndex: 0, pageSize: 50 },
@@ -199,18 +156,15 @@ return(
             renderTopToolbarCustomActions={({ table }) => {
                 function handleAction(actionName) {
                     setSelectedItems(table.getSelectedRowModel().flatRows)
-                    if(actionName === 'delete') setShowDelete(true)
                 }
         
                 return (
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <h6 className='mt-2' style={{marginLeft: '.5rem', marginRight: '1rem'}}>Groups</h6>
-                        <button className='btn btn-sm btn-outline-primary' disabled={!table.getIsSomeRowsSelected()} onClick={() => handleAction('delete')} variant="contained">Delete</button>
+                        <h6 className='mt-2' style={{marginLeft: '.5rem', marginRight: '1rem'}}>Apps</h6>
                         {moreUrl && 
                             <>
                             <button className='btn btn-sm btn-warning' onClick={() => handleGetMore(1)} variant="contained">Get more </button>
                             <button className='btn btn-sm btn-warning' onClick={() => handleGetMore(2)} variant="contained">Get 2x more </button>
-                            <button className='btn btn-sm btn-warning' onClick={() => handleGetMore(10)} variant="contained">Get 10x more </button>
                             </>
                         }
                     </div>
@@ -218,10 +172,8 @@ return(
               }}                
         />
 
-
-        <div style={{marginTop: '1.5rem'}}></div>
     </div>
 )
 }
 
-export default withAuthenticationRequired(GroupCollection)
+export default withAuthenticationRequired(AppCollection)

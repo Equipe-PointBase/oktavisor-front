@@ -6,7 +6,7 @@ import axios from 'axios'
 import MaterialReactTable from 'material-react-table'
 import { Box } from '@mui/material'
 
-function SchemasCollection ({data}) {
+function SchemaCollection ({data}) {
 
     //console.info(data)
     //console.info(serverFilter)
@@ -120,4 +120,4 @@ function SchemasCollection ({data}) {
       
 }
 
-export default withAuthenticationRequired(SchemasCollection)
+export default withAuthenticationRequired(SchemaCollection)

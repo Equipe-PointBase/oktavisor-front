@@ -22,7 +22,8 @@ import NavDropdown from 'react-bootstrap/NavDropdown'
 
 import UserCollection from './Okta/userCollection'
 import GroupCollection from './Okta/groupCollection'
-import SchemasCollection from './Okta/schemas'
+import SchemaCollection from './Okta/schemaCollection'
+import AppCollection from './Okta/appCollection'
 
 
 const EnvironmentPage = () => {
@@ -244,7 +245,8 @@ const EnvironmentPage = () => {
         <div style={{marginTop: '.15rem'}}>
           {currentChild === 'users' && !submitFilter && <UserCollection data={ token } serverFilter={serverFilter}/>}
           {currentChild === 'groups' && <GroupCollection data={ token } serverFilter={serverFilter}/>}
-          {currentChild === 'schemas' && <SchemasCollection data={ token } />}
+          {currentChild === 'schemas' && <SchemaCollection data={ token } />}
+          {currentChild === 'apps' && <AppCollection data={ token } serverFilter={serverFilter}/>}
         </div>
       }
 
@@ -255,6 +257,8 @@ const EnvironmentPage = () => {
         </div>
       }
       <div id="widget-container"></div>
+
+      <div style={{marginTop: '1.5rem'}}></div>
     </div>    
   )
 }

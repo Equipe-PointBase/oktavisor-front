@@ -124,3 +124,12 @@ ul.timeline {
 .MuiBox-root.css-1nsfdkm {
   display: inline;
 }
+
+.css-1rxzxts-MuiTableCell-root {
+  width: 50px;
+}
+
+.nav-logo {
+  width: 130px;
+  height: auto;
+}

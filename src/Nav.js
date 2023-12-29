@@ -8,7 +8,7 @@ class Nav extends Component {
         return(
                 <nav className="navbar navbar-expand-lg mb-3">
                 <div className="container-fluid">
-                    <img className='nav-logo' src="https://pointbase.fr/Applications/PBWeb/assets/img/img-pb/logo_transparent_banner.png" alt='Oktavisor'/>
+                    <img className='nav-logo' src="https://assets-global.website-files.com/64c21e1b39523790ed388d98/64c238ee5be66bd1bd0f6d6d_logo_transparent.png" alt='Oktavisor'/>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                     </button>
