@@ -11,22 +11,29 @@ import LoginButton from './login-button'
 
 import MaterialReactTable from 'material-react-table'
 import { Box, IconButton } from '@mui/material'
-import { Edit as EditIcon, Delete as DeleteIcon, Share as ShareIcon } from '@mui/icons-material'
-import Fab from '@mui/material/Fab'
-import AddIcon from '@mui/icons-material/Add'
-
+import { Edit as EditIcon, Delete as DeleteIcon, Share as ShareIcon, AutoFixHighOutlined } from '@mui/icons-material'
 
 function Home () {
     const { user, isAuthenticated, getAccessTokenSilently } = useAuth0()
     const history = useHistory()
+    const [displaySecretEnvs, setDisplaySecretEnvs] = useState(false)
+
+    //Define states for environment form
+    const newEnvironment = { clientid: '', issuer: '', name: '', useClassicEngine: false, isSecret: false }
+    const [formData, setFormData] = useState(newEnvironment)
+    const [formTitle, setFormTitle] = useState('Add Environment')
+    const [originalData, setOriginalData] = useState(newEnvironment)
+
 
     //define state/store for environment data
-    var environments = useStore(state => state.environments)
+    const environments = useStore(state => state.environments)
     const setEnvironments = useStore(state => state.setEnvironments)
 
     useEffect(() => {
-        setEnvironments(user.environments); // initialize the array with pre-existing values once the user is authenticated (user.environments will change)
-      }, [user.environments])
+        // initialize the array with pre-existing values once the user is authenticated (user.environments will change)
+        setEnvironments(user.environments)
+    }, [user.environments])
+
 
     if(!isAuthenticated) {
         return(
@@ -38,13 +45,14 @@ function Home () {
         )
     }
     else {
-        //Define states for environment form
-        const newEnvironment = { clientid: '', issuer: '', name: '' }
-        const [formData, setFormData] = useState(newEnvironment)
-        const [formTitle, setFormTitle] = useState('Add Environment')
-        const [originalData, setOriginalData] = useState(newEnvironment)
+        const handleDisplayAllEnvs = (event) => {
+            setDisplaySecretEnvs(event.target.checked)
+        }
 
-        const handleChange = (event) => { setFormData({ ...formData, [event.target.name]: event.target.value, }) }
+        const handleChange = (event) => { 
+            let myValue = (event.target.type === 'checkbox' ? event.target.checked : event.target.value)
+            setFormData({ ...formData, [event.target.name]: myValue, })
+        }
 
         const editEnvironment = (rowData) => { 
             //console.info(rowData)
@@ -89,14 +97,14 @@ function Home () {
             }
         }
 
-        const connectToEnvironment = (rowData) => {
+        const connectToEnvironment = async (rowData) => {
             history.push(`/environment/${rowData.name}`)
         }
 
         //simple column definitions pointing to data
         const columns = useMemo(() => [
             {header: 'Name', accessorKey: 'name'},
-            {header: 'Issuer',accessorKey: 'issuer'},
+            {header: 'Domain',accessorKey: 'issuer'},
             {header: 'Client Id',accessorKey: 'clientid'},
             ],
             [],
@@ -120,12 +128,22 @@ function Home () {
                                         <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} />
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="issuer" className="col-form-label">Issuer:</label>
+                                        <label htmlFor="issuer" className="col-form-label">Domain:</label>
                                         <input type="text" className="form-control" name="issuer" value={formData.issuer} onChange={handleChange} />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="clientid" className="col-form-label">ClientId:</label>
                                         <input type="text" className="form-control" name="clientid" value={formData.clientid} onChange={handleChange} />
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <input type="checkbox" className="form-check-input" id="useClassicEngine" name="useClassicEngine" checked={formData.useClassicEngine} onChange={handleChange} />
+                                        <label htmlFor="useClassicEngine" className="col-form-label">Use classic engine</label>
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <input type="checkbox" className="form-check-input" id="isSecret" name="isSecret" checked={formData.isSecret} onChange={handleChange} />
+                                        <label htmlFor="isSecret" className="col-form-label">Private/Secret environment</label>
                                     </div>
                                 </form>
 
@@ -158,12 +176,16 @@ function Home () {
 
                 <MaterialReactTable
                     columns={columns}
-                    data={environments}
+                    data={displaySecretEnvs ? environments : environments.filter(item => item.isSecret !== true)}
                     //enableRowSelection
                     enableMultiRowSelection={false}
                     enableColumnOrdering
                     enableGlobalFilter={false} //turn off a feature
                     enableFullScreenToggle={false}
+
+                    initialState={{
+                        columnVisibility: { clientid: false, },
+                    }}
 
                     enableRowActions
                     renderRowActions={({ row }) => (
@@ -178,8 +200,13 @@ function Home () {
                     renderTopToolbarCustomActions={({ table }) => {
                         return (
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                <h5 className='mt-2' style={{marginLeft: '.5rem', marginRight: '1rem'}}>Environments</h5>
-                                <Fab data-bs-toggle="modal" data-bs-target="#modalEnvironment" color="primary" size="small" aria-label="add" onClick={() => editEnvironment()} > <AddIcon /> </Fab>
+                                <h5 className='mt-1' style={{marginLeft: '.5rem', marginRight: '1rem'}}>Environments</h5>
+                                <button className='btn btn-sm btn-outline-primary' data-bs-toggle="modal" data-bs-target="#modalEnvironment" aria-label="add" onClick={() => editEnvironment()} > + Add </button>
+
+                                <span style={{marginLeft: "2rem"}}></span>
+                                <input type="checkbox" className="form-check-input" id="displayAllEnvironments" name="displayAllEnvironments" checked={displaySecretEnvs} onChange={handleDisplayAllEnvs} />
+                                <label htmlFor="displayAllEnvironments" className="col-form-label">Display all </label>
+   
                             </div>
                         );
                       }}
@@ -190,6 +217,10 @@ function Home () {
                         An <em>environment</em> represents an actual Okta tenant.
                         <br/>
                         To make the target Okta tenant work as an Oktavisor environment, you need to set up a new application in the Okta tenant.
+                    </p>
+                    <p>
+                        * Display All : you can define some of your environments as "private/secret" to prevent those environments from being displayed by default.
+                        <br/>This can be useful for sensitive environments when you plan a screen share session, for example.
                     </p>
                 </div>
 

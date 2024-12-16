@@ -5,11 +5,6 @@ import { Box, } from '@mui/material';
 
 const UserDetailsGroups = ({ data }) => {
 
-    if(data) {
-        console.info('User groups')
-        console.info(data)
-    }
-
     //Column definitions pointing to data
     const columns = useMemo(() => [
             {id: 'id', header: 'Id', accessorKey: 'id'},
@@ -24,13 +19,14 @@ const UserDetailsGroups = ({ data }) => {
                     </Box>
                 )
             },
+            {id: 'source', header: 'Source', accessorKey: 'sourceName'},
             {id: 'description', header: 'Description', accessorKey: 'profile.description'},
         ],
         [],
     )
 
     return (
-        <Accordion alwaysOpen>
+        <Accordion defaultActiveKey="0" alwaysOpen>
             <Accordion.Item eventKey="0">
                 <Accordion.Header>Groups</Accordion.Header>
                 <Accordion.Body>
@@ -44,11 +40,16 @@ const UserDetailsGroups = ({ data }) => {
                             enableGlobalFilter={true} 
                             enableFullScreenToggle={false}
                             enableDensityToggle={false}
+                            enableStickyHeader={true}
+                            enableStickyFooter={true}         
+                            muiTableContainerProps={{ sx: { maxHeight: 500 } }}
+                            enableGrouping
 
                             initialState={{
-                                columnVisibility: { id: false },
+                                columnVisibility: { id: false, description: false },
                                 density: 'compact',
                                 showGlobalFilter: true,
+                                pagination: { pageIndex: 0, pageSize: 50 },
                             }}
                         />
                     }

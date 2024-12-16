@@ -8,29 +8,31 @@ import { Box, IconButton } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 
 import UserDetails from './userDetails'
-
 import UserMassDelete from './userMassDelete'
 
+function UserCollection ({data, serverFilter}) {
 
-function UserCollection (data) {
-
-    //console.info(data.data)
-    const [currentToken, setCurrentToken] = useState(data.data)
+    //console.info(data)
+    //console.info(serverFilter)
+    const [currentToken, setCurrentToken] = useState(data)
     const [moreUrl, setMoreUrl] = useState('')
     const [myData, setMyData] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
-    const [selectedId, setSelectedId] = useState(null)
+    const [selectedId, setSelectedId] = useState('')
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const myUrl = visorConfig.backEnd.baseUrl + '/users'
+                var myUrl = visorConfig.backEnd.baseUrl + '/users'
+                if(serverFilter) myUrl += '?search=' + serverFilter
+
                 let result = await axios(myUrl, { 
                     method: 'GET',
                     headers: { 
-                        Authorization: `Bearer ${currentToken.accessToken}`,
-                        Domain: currentToken.claims.iss
+                        'Authorization': `Bearer ${currentToken.accessToken}`,
+                        'okta-response' : 'omitCredentialsLinks',
+                        'Domain': currentToken.claims.iss
                     },
                 })
     
@@ -96,12 +98,13 @@ function UserCollection (data) {
         setShowDelete(false) 
     }
 
-    function handleMassDelete() {
+    async function handleMassDelete() {
         //Get ids of items to delete to send them over to backend
         var itemsToDelete = selectedItems.map((row) => row.getValue('id'))
 
-        
 
+
+        
         //Reflect on the client 
         var res = myData.filter(obj => !itemsToDelete.includes(obj.id))
         setMyData(res)
@@ -111,6 +114,10 @@ function UserCollection (data) {
     
 
   
+    function formatDate(dateString) {
+        return dateString ? dateString.replace('T', ' ').substring(0, 19) : ''
+    }
+
     //Column definitions pointing to data
     const columns = useMemo(() => [
             {id: 'id', header: 'Id', accessorKey: 'id'},
@@ -120,8 +127,14 @@ function UserCollection (data) {
             },
             {id: 'login', header: 'Login', accessorKey: 'profile.login', enableHiding: false},
             {id: 'email', header: 'Email', accessorKey: 'profile.email'},
-            {id: 'status', header: 'Status', accessorKey: 'status'},
-            {id: 'provider', header: 'Provider', accessorKey: 'credentials.provider.name'},
+            {id: 'status', header: 'Status', accessorKey: 'status', filterVariant: 'multi-select'},
+            {id: 'provider', header: 'Provider', accessorKey: 'credentials.provider.name', filterVariant: 'multi-select'},
+            {id: 'created', header: 'Created', accessorFn: (row) => formatDate(row.created)},
+            {id: 'activated', header: 'Activated', accessorFn: (row) => formatDate(row.activated)},
+            {id: 'statusChanged', header: 'Status changed', accessorFn: (row) => formatDate(row.statusChanged)},
+            {id: 'lastLogin', header: 'Last login', accessorFn: (row) => formatDate(row.lastLogin)},
+            {id: 'lastUpdated', header: 'Last update', accessorFn: (row) => formatDate(row.lastUpdated)},
+            {id: 'passwordChanged', header: 'Pwd changed', accessorFn: (row) => formatDate(row.passwordChanged)},
         ],
         [],
     )
@@ -131,23 +144,26 @@ function UserCollection (data) {
             <MaterialReactTable
                 columns={columns}
                 data={myData}
+                enableFacetedValues
                 state={{ showSkeletons: isLoading }}
+                enableColumnResizing
                 enableRowSelection
                 enableMultiRowSelection={true}
                 enableColumnOrdering
                 enableGlobalFilter={true} 
                 enableDensityToggle={true}
                 enableFullScreenToggle={false}
+                enableStickyHeader={true}
+                enableStickyFooter={true}         
+                muiTableContainerProps={{ sx: { maxHeight: 630 } }}
+                enableGrouping
 
                 initialState={{
-                    columnVisibility: { id: false },
+                    columnVisibility: { id: false, created: false, activated: false, statusChanged: false, lastLogin: false, lastUpdated: false, passwordChanged: false },
                     density: 'compact',
                     showGlobalFilter: true,
+                    pagination: { pageIndex: 0, pageSize: 50 },
                 }}
-
-                muiTableBodyRowProps={({ row }) => ({
-                    backgroundcolor: row.status === 'PROVISIONED' ? 'orange' : 'white'
-                })}
 
                 enableRowActions
                 renderRowActions={({ row }) => (
@@ -177,12 +193,11 @@ function UserCollection (data) {
                                 </>
                             }
                         </div>
-                    );
-                  }}                
+                    )
+                }}                
             />
 
             {showDetails && <UserDetails userId={selectedId} handleCloseDetails={handleCloseDetails} currentToken={currentToken} />}
-
             {showDelete && <UserMassDelete selectedItems={selectedItems} handleClose={handleCloseDelete} handleCallback={handleMassDelete} />}
 
             <div style={{marginTop: '1.5rem'}}></div>

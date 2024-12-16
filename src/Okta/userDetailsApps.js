@@ -5,11 +5,6 @@ import { Box, } from '@mui/material';
 
 const UserDetailsApps = ({ data }) => {
 
-    if(data) {
-        console.info('User\'s assigned Apps')
-        console.info(data)    
-    }
-
     //Column definitions pointing to data
     const columns = useMemo(() => [
         {id: 'id', header: 'Id', accessorKey: 'id'},
@@ -33,7 +28,7 @@ const UserDetailsApps = ({ data }) => {
 
 
     return (
-        <Accordion alwaysOpen>
+        <Accordion defaultActiveKey="0" alwaysOpen>
             <Accordion.Item eventKey="0">
                 <Accordion.Header>Assigned apps</Accordion.Header>
                 <Accordion.Body>
@@ -47,11 +42,16 @@ const UserDetailsApps = ({ data }) => {
                             enableGlobalFilter={true} 
                             enableFullScreenToggle={false}
                             enableDensityToggle={false}
+                            enableStickyHeader={true}
+                            enableStickyFooter={true}         
+                            muiTableContainerProps={{ sx: { maxHeight: 500 } }}
+                            enableGrouping={false}
 
                             initialState={{
                                 columnVisibility: { id: false },
                                 density: 'compact',
                                 showGlobalFilter: true,
+                                pagination: { pageIndex: 0, pageSize: 50 },
                             }}
                         />
                     }

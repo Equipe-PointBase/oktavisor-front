@@ -7,6 +7,7 @@ import UserDetailsProfile from './userDetailsProfile'
 import UserDetailsGroups from './userDetailsGroups'
 import UserDetailsApps from './userDetailsApps'
 import UserDetailsFactors from './userDetailsFactors'
+import UserDetailsPolicies from './userDetailsPolicies'
 
 const UserDetails = ({ userId, handleCloseDetails, currentToken }) => {
   const [detailData, setDetailData] = useState(null)
@@ -24,7 +25,7 @@ const UserDetails = ({ userId, handleCloseDetails, currentToken }) => {
                 },
             })
             
-            console.info(result)
+            //console.info(result)
             setDetailData(result.data)
             var myModal = new bootstrap.Modal(document.getElementById('modalDetails'))
             myModal.show()
@@ -36,13 +37,6 @@ const UserDetails = ({ userId, handleCloseDetails, currentToken }) => {
     fetchData()
 
   }, [userId])
-
-
-
-
-
-
-
 
   return (
     <div className="modal fade" id="modalDetails" tabIndex="-1" aria-labelledby="modalDetails" aria-hidden="false">
@@ -62,14 +56,18 @@ const UserDetails = ({ userId, handleCloseDetails, currentToken }) => {
                 <div className='col-6'>
                   <UserDetailsProfile data={detailData ? detailData[0] : null} />
                   <br/>
-                  <UserDetailsFactors  data={detailData ? {factors: detailData[3], catalog: detailData[4]} : null} />
-                  <br/>
                   <UserDetailsGroups  data={detailData ? detailData[1] : null} />
+                  <br/>
+                  <UserDetailsApps  data={detailData ? detailData[2] : null} />
                   <br/>
                 </div>
 
                 <div className='col-6'>
-                  <UserDetailsApps  data={detailData ? detailData[2] : null} />
+                  <UserDetailsPolicies  data={detailData ? detailData[6] : null} title="Password policies" openByDefault={false} />
+                  <br/>
+                  <UserDetailsPolicies  data={detailData ? detailData[7] : null} title="Enrollment policies" openByDefault={true}/>
+                  <br/>
+                  <UserDetailsFactors  data={detailData ? {factors: detailData[3], catalog: detailData[4]} : null} />
                   <br/>
                 </div>
 
